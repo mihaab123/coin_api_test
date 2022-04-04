@@ -1,8 +1,12 @@
+import 'package:coin_api_test/controllers/coin_hystory_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ChartingData extends StatelessWidget {
-  const ChartingData({Key? key}) : super(key: key);
+  final CoinHystoryController _coinHystoryController =
+      Get.find<CoinHystoryController>();
+  ChartingData({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +24,15 @@ class ChartingData extends StatelessWidget {
         child: SfCartesianChart(
             primaryXAxis: CategoryAxis(),
             series: <ChartSeries>[
-              // Initialize line series
               SplineSeries<ChartData, String>(
-                  dataSource: [
-                    // Bind data source
-                    ChartData('Jan', 35),
-                    ChartData('Feb', 28),
-                    ChartData('Mar', 34),
-                    ChartData('Apr', 32),
-                    ChartData('May', 40)
-                  ],
+                  dataSource: List.generate(
+                      _coinHystoryController.hystoryList.length, (index) {
+                    return ChartData(
+                        _coinHystoryController
+                            .hystoryList[index].time_period_end.day
+                            .toString(),
+                        _coinHystoryController.hystoryList[index].rate_close);
+                  }),
                   xValueMapper: (ChartData data, _) => data.x,
                   yValueMapper: (ChartData data, _) => data.y)
             ]),

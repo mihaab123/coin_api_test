@@ -1,7 +1,13 @@
+import 'package:coin_api_test/controllers/coin_hystory_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MarketData extends StatelessWidget {
-  const MarketData({Key? key}) : super(key: key);
+  final CoinHystoryController _coinHystoryController =
+      Get.find<CoinHystoryController>();
+  MarketData({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +26,10 @@ class MarketData extends StatelessWidget {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Column(
             children: [
-              Text("Symbol:"),
-              Text("BTN/USD"),
+              const Text("Symbol:"),
+              Obx(() {
+                return Text(_coinHystoryController.symbol.value);
+              }),
             ],
           ),
           Column(
