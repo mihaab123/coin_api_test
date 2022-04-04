@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:coin_api_test/models/coin_asset.dart';
 import 'package:coin_api_test/models/coin_hystory.dart';
