@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:coin_api_test/models/coin_asset.dart';
 import 'package:coin_api_test/models/coin_hystory.dart';
@@ -11,12 +10,7 @@ class CoinApi {
   String token = "4A1800B6-D40E-43BC-AAA9-D3808B07B2F4";
   String url = "https://rest.coinapi.io/";
   Future<Response> getRequest(String body) async {
-    var dio = Dio(
-      BaseOptions(
-        baseUrl: url,
-        receiveDataWhenStatusError: true,
-      ),
-    );
+    var dio = Dio();
     dio.interceptors.add(InterceptorsWrapper(onError: (e, handler) {
       debugPrint(e.message);
       handler.next(e);
@@ -25,21 +19,25 @@ class CoinApi {
       debugPrint(r.path);
       handler.next(r);
     }, onResponse: (r, handler) {
-      debugPrint(r.data);
+      debugPrint(r.data.toString());
       handler.next(r);
     }));
     //dio.options.headers['content-Type'] = 'application/json';
+    dio.options.headers.clear();
     dio.options.headers["X-CoinAPI-Key"] = token;
-    return await dio.get(body);
+    debugPrint(dio.options.headers.toString());
+    var response = await dio.get(url + body);
+    debugPrint(response.statusCode.toString());
+    return response;
   }
 
   Future<List<CoinAsset>> getAllAssets() async {
     List<CoinAsset> _assetsList = [];
-    var response = await getRequest("String body");
-    _assetsList = json
+    var response = await getRequest("v1/assets/BTC");
+    /* _assetsList = json
         .decode(response.data)
         .map((data) => CoinAsset.fromJson(data))
-        .toList();
+        .toList();*/
     return _assetsList;
   }
 
@@ -53,15 +51,17 @@ class CoinApi {
     String endTime = DataService().DateToString(_currentDate);
     List<CoinHystory> _hystoryList = [];
     if (asset_id_base.isNotEmpty && asset_id_quote.isNotEmpty) {
-      var response = await getRequest(
-          "/v1/exchangerate/$asset_id_base/$asset_id_quote/history?period_id=1DAY&time_start=$startTime&time_end=$endTime");
-      debugPrint(response.toString());
-      _hystoryList = json
-          .decode(response.data)
-          .map((data) => CoinHystory.fromJson(data))
-          .toList();
+      Response<dynamic> response = await getRequest(
+          "v1/exchangerate/$asset_id_base/$asset_id_quote/history?period_id=1DAY&time_start=$startTime&time_end=$endTime");
+      debugPrint((response.data as List).length.toString());
+      for (var pair in (response.data as List)) {
+        _hystoryList.add(CoinHystory(
+            rate_close: pair["rate_close"],
+            time_period_end:
+                DataService().StringToDate(pair["time_period_end"])));
+      }
     }
-    debugPrint(_hystoryList.toString());
+    debugPrint("_hystoryList = ${_hystoryList.toString()}");
     return _hystoryList;
   }
 }

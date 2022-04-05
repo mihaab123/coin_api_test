@@ -10,34 +10,36 @@ class ChartingData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 1, //
+    return Obx(() {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1, //
+          ),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(12.0),
+          ),
         ),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(12.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SfCartesianChart(
+              primaryXAxis: CategoryAxis(),
+              series: <ChartSeries>[
+                SplineSeries<ChartData, String>(
+                    dataSource: List.generate(
+                        _coinHystoryController.hystoryList.length, (index) {
+                      return ChartData(
+                          _coinHystoryController
+                              .hystoryList[index].time_period_end.day
+                              .toString(),
+                          _coinHystoryController.hystoryList[index].rate_close);
+                    }),
+                    xValueMapper: (ChartData data, _) => data.x,
+                    yValueMapper: (ChartData data, _) => data.y)
+              ]),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SfCartesianChart(
-            primaryXAxis: CategoryAxis(),
-            series: <ChartSeries>[
-              SplineSeries<ChartData, String>(
-                  dataSource: List.generate(
-                      _coinHystoryController.hystoryList.length, (index) {
-                    return ChartData(
-                        _coinHystoryController
-                            .hystoryList[index].time_period_end.day
-                            .toString(),
-                        _coinHystoryController.hystoryList[index].rate_close);
-                  }),
-                  xValueMapper: (ChartData data, _) => data.x,
-                  yValueMapper: (ChartData data, _) => data.y)
-            ]),
-      ),
-    );
+      );
+    });
   }
 }
 

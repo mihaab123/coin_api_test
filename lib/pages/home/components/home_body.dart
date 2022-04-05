@@ -13,6 +13,7 @@ class HomeBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController nameController = TextEditingController();
+    nameController.text = "BTC/USD";
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -41,6 +42,7 @@ class HomeBody extends StatelessWidget {
                     text: "Subscribe",
                     callback: () {
                       var listCoin = (nameController.text.split('/'));
+                      //_coinHystoryController.getAllAssets();
                       _coinHystoryController.loadData(listCoin[0], listCoin[1]);
                     },
                     padding: 20,

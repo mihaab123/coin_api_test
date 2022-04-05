@@ -22,6 +22,11 @@ class CoinHystoryController extends GetxController {
     String asset_id_quote,
   ) async {
     symbol.value = "$asset_id_base/$asset_id_quote";
-    await CoinApi().getAllHystory(asset_id_base, asset_id_quote);
+    hystoryList.value =
+        await CoinApi().getAllHystory(asset_id_base, asset_id_quote);
+  }
+
+  getAllAssets() async {
+    await CoinApi().getAllAssets();
   }
 }
