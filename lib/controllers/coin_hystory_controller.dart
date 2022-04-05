@@ -1,4 +1,3 @@
-import 'package:coin_api_test/models/coin_asset.dart';
 import 'package:coin_api_test/models/coin_hystory.dart';
 import 'package:coin_api_test/services/coin_api.dart';
 import 'package:get/get.dart';

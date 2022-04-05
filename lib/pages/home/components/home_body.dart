@@ -2,6 +2,7 @@ import 'package:coin_api_test/controllers/coin_hystory_controller.dart';
 import 'package:coin_api_test/pages/home/components/charting_data.dart';
 import 'package:coin_api_test/pages/home/components/main_rounded_button.dart';
 import 'package:coin_api_test/pages/home/components/market_data.dart';
+import 'package:coin_api_test/services/coin_api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

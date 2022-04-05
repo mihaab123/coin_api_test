@@ -5,10 +5,14 @@ import 'package:coin_api_test/models/coin_hystory.dart';
 import 'package:coin_api_test/services/date_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:web_socket_channel/io.dart';
 
 class CoinApi {
   String token = "4A1800B6-D40E-43BC-AAA9-D3808B07B2F4";
   String url = "https://rest.coinapi.io/";
+  final channel = IOWebSocketChannel.connect(
+    Uri.parse('wss://ws-sandbox.coinapi.io/v1/'),
+  );
   Future<Response> getRequest(String body) async {
     var dio = Dio();
     dio.interceptors.add(InterceptorsWrapper(onError: (e, handler) {
@@ -28,6 +32,7 @@ class CoinApi {
     debugPrint(dio.options.headers.toString());
     var response = await dio.get(url + body);
     debugPrint(response.statusCode.toString());
+    dio.close();
     return response;
   }
 
@@ -62,6 +67,15 @@ class CoinApi {
       }
     }
     debugPrint("_hystoryList = ${_hystoryList.toString()}");
+    final json = jsonEncode({
+      "type": "hello",
+      "apikey": token,
+      "heartbeat": false,
+      "subscribe_data_type": ["exrate"],
+      "subscribe_filter_asset_id": ["$asset_id_base/$asset_id_quote"]
+    });
+    debugPrint(json);
+    channel.sink.add(jsonEncode(json));
     return _hystoryList;
   }
 }

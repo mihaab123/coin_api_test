@@ -1,9 +1,7 @@
-import 'package:coin_api_test/controllers/coin_hystory_controller.dart';
-import 'package:dio/dio.dart';
+import 'package:coin_api_test/models/coin_rate.dart';
+import 'package:coin_api_test/services/coin_api.dart';
+import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MarketData extends StatefulWidget {
   MarketData({
@@ -15,11 +13,6 @@ class MarketData extends StatefulWidget {
 }
 
 class _MarketDataState extends State<MarketData> {
-  final CoinHystoryController _coinHystoryController =
-      Get.find<CoinHystoryController>();
-  /*final channel = IOWebSocketChannel.connect(
-      Uri.parse('wss://ws.coinapi.io/v1/'),
-      headers: {"X-CoinAPI-Key": "4A1800B6-D40E-43BC-AAA9-D3808B07B2F4"});*/
   @override
   void initState() {
     /*channel.sink.add({
@@ -34,16 +27,26 @@ class _MarketDataState extends State<MarketData> {
 
   @override
   void dispose() {
-    //channel.sink.close();
+    CoinApi().channel.sink.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: null,
+        stream: CoinApi().channel.stream,
         builder: (context, snapshot) {
           debugPrint("test ${snapshot.data.toString()}");
+          CoinRate currentRate;
+          if (snapshot.data == null) {
+            currentRate = CoinRate(
+                asset_id_base: "",
+                asset_id_quote: '',
+                rate: 0,
+                time: DateTime.now());
+          } else {
+            currentRate = snapshot.data as CoinRate;
+          }
           return Container(
             decoration: BoxDecoration(
               border: Border.all(
@@ -61,21 +64,21 @@ class _MarketDataState extends State<MarketData> {
                     Column(
                       children: [
                         const Text("Symbol:"),
-                        Obx(() {
-                          return Text(_coinHystoryController.symbol.value);
-                        }),
+                        Text(
+                            "${currentRate.asset_id_base}/${currentRate.asset_id_quote}"),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("Price:"),
-                        //Text(snapshot.data![""]),
+                        Text("\$${currentRate.rate}"),
                       ],
                     ),
                     Column(
                       children: [
                         Text("Time:"),
-                        Text("BTN/USD"),
+                        Text(DateTimeFormat.format(currentRate.time,
+                            format: 'M j, H:i')),
                       ],
                     )
                   ]),
