@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:coin_api_test/models/coin_asset.dart';
 import 'package:coin_api_test/models/coin_hystory.dart';
@@ -10,7 +11,7 @@ import 'package:web_socket_channel/io.dart';
 class CoinApi {
   String token = "4A1800B6-D40E-43BC-AAA9-D3808B07B2F4";
   String url = "https://rest.coinapi.io/";
-  final channel = IOWebSocketChannel.connect(
+  var channel = IOWebSocketChannel.connect(
     Uri.parse('wss://ws-sandbox.coinapi.io/v1/'),
   );
   Future<Response> getRequest(String body) async {
@@ -74,8 +75,14 @@ class CoinApi {
       "subscribe_data_type": ["exrate"],
       "subscribe_filter_asset_id": ["$asset_id_base/$asset_id_quote"]
     });
-    debugPrint(json);
-    channel.sink.add(jsonEncode(json));
+
+    channel.sink.add(json);
+    /*var stream = channel.stream;
+    stream.listen((message) {
+      debugPrint(message.toString());
+    }, onError: (error) {
+      debugPrint(error.toString());
+    });*/
     return _hystoryList;
   }
 }
