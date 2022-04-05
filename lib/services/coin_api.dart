@@ -77,12 +77,12 @@ class CoinApi {
     });
 
     channel.sink.add(json);
-    /*var stream = channel.stream;
+    var stream = channel.stream;
     stream.listen((message) {
       debugPrint(message.toString());
     }, onError: (error) {
       debugPrint(error.toString());
-    });*/
+    });
     return _hystoryList;
   }
 }
